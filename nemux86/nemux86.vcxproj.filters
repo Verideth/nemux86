@@ -38,10 +38,10 @@
     <ClInclude Include="src\core\functional\opcodes.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\nes_cpu.hpp">
+    <ClInclude Include="src\core\functional\registers.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\functional\registers.hpp">
+    <ClInclude Include="src\core\nes.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,10 +1,10 @@
-#include "nes_cpu.hpp"
+#include "nes.hpp"
 #include <cstdint>
 #include "../nemu_main.hpp"
 
 void c_nes::initialize_nes()
 {
-
+	c_nes_cpu* global_nes_cpu_ptr = new c_nes_cpu;
 }
 
 void c_nes::run_cpu_clock()

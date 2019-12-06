@@ -24,13 +24,12 @@ class c_nes_cpu : c_nes
 public:
 	c_nes_cpu() : cur_opcode(cur_opcode) {  }
 	/* converts the location (addres) bytecode, also sets up cur_opcode */
-	void convert_mem_bytecode(std::int16_t location);
+	void convert_mem_bytecode(std::uint16_t location);
 	std::int32_t gather_opcodes(std::uint16_t l_endian);
 	opcode_t cur_opcode;
+	std::stack<std::uint16_t> cpu_stack;
 
 private:
-
-
 protected:
 	std::vector<opcode_t> opcodes_vector;
 	static std::uint8_t pc; // program counter, 8 bit number

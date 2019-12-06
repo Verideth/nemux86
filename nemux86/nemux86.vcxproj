@@ -150,7 +150,7 @@
   <ItemGroup>
     <ClInclude Include="src\core\functional\opcodes.hpp" />
     <ClInclude Include="src\core\functional\registers.hpp" />
-    <ClInclude Include="src\core\nes_cpu.hpp" />
+    <ClInclude Include="src\core\nes.hpp" />
     <ClInclude Include="src\engine\structures_types.hpp" />
     <ClInclude Include="src\nemu_main.hpp" />
   </ItemGroup>
