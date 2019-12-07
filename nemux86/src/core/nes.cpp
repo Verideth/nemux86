@@ -4,18 +4,18 @@
 
 void c_nes::initialize_nes()
 {
-	c_nes_cpu* nes_cpu_ptr = new c_nes_cpu;
+
 }
 
 void c_nes::run_cpu_clock()
 {
-	for (std::int16_t it_addr = 0; it_addr < nemu_ptr->length; it_addr++)
+	for (std::uint16_t loc_iterator = 0; loc_iterator < nemu_ptr->length; loc_iterator++)
 	{
-		nes_cpu_ptr->convert_mem_bytecode(it_addr);
+		c_nes_cpu::convert_mem_bytecode(loc_iterator);
 	}
 }
 
 void c_nes::destroy_nes()
 {
-	delete nes_cpu_ptr;
+	// called on stop
 }
