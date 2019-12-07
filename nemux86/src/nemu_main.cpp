@@ -1,10 +1,5 @@
 #include "nemu_main.hpp"
 
-c_nemu::c_nemu() 
-{ 
-	this->length = 0; 
-}
-
 void c_nemu::setup_file()
 {
 	this->file.open(this->file_name, std::ios::in | std::ios::binary);
@@ -31,4 +26,9 @@ void c_nemu::initialize_nemu(std::string& rom_file)
 void c_nemu::run_nemu()
 {
 
+}
+
+void c_nemu::destroy_nemu()
+{
+	this->nes_obj.destroy_nes();
 }

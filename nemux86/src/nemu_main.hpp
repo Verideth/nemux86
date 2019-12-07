@@ -9,9 +9,10 @@
 class c_nemu
 {
 public:
-	c_nemu();
+	c_nemu() : length(0) {  }
 	void initialize_nemu(std::string& rom_file);
 	void run_nemu();
+	void destroy_nemu();
 	void setup_file();
 	bool running_on = false;
 	std::ifstream file;

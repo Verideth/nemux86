@@ -2,20 +2,20 @@
 #include "../nemu_main.hpp"
 #include <memory>
 
-c_nes_cpu* global_nes_cpu_ptr = new c_nes_cpu();
+c_nes_cpu* nes_cpu_ptr = new c_nes_cpu();
 
-void c_nes_cpu::convert_mem_bytecode(std::uint16_t location)
+void c_nes_cpu::convert_mem_bytecode(const std::uint16_t location)
 {
 	opcode_t opcode;
 	opcode.bytecode = (nemu_ptr->memory[location] << 8) | (nemu_ptr->memory[location + 1]); 
 	opcode.l_endian = (opcode.bytecode & 0x00FF);
 	opcode.b_endian = (opcode.bytecode & 0xFF00);
+	
 	this->cur_opcode = opcode;
-
-	this->gather_opcodes(this->cur_opcode.l_endian);
+	this->gather_opcodes(this->cur_opcode.l_endian, this->cur_opcode.bytecode);
 }
 
-std::int32_t c_nes_cpu::gather_opcodes(std::uint16_t l_endian)
+std::int32_t c_nes_cpu::gather_opcodes(const std::uint8_t l_endian, const std::uint16_t bytecode)
 {
 	if (l_endian)
 	{
@@ -132,6 +132,9 @@ std::int32_t c_nes_cpu::gather_opcodes(std::uint16_t l_endian)
 		case OPCODE_HEX::EOR_2:
 			std::printf("EOR D, X\n");
 			this->cur_opcode.opcode_name = "EOR";
+			break;
+		default:
+			std::printf("ERROR: UNK OPCODE\n");
 			break;
 		}
 	}

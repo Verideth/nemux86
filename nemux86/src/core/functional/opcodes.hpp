@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <string>
-#include <memory>
+#include <utility>
 
 // EACH NUMBER AT THE END OF AN INSTRUCTION 
 // EXAMPLE SLO_3, 3 BEING THE NUMBER, SHOWS
@@ -284,19 +284,29 @@ enum OPCODE_HEX
 };
 
 // structure for managing opcodes
-typedef struct opcode_t
+struct opcode_t
 {
-	opcode_t() {  }		
-	opcode_t(const opcode_t& opcode_object) 
+	opcode_t() = default;
+	~opcode_t() = default;
+	opcode_t(opcode_t&& obj) noexcept(false) { std::exchange(obj, 0); }
+	opcode_t(opcode_t& obj) 
 	{
-		opcode_name = opcode_object.opcode_name;
-		bytecode = opcode_object.bytecode;
-		l_endian = opcode_object.l_endian;
-		b_endian = opcode_object.b_endian;
+		this->opcode_name = obj.opcode_name;
+		this->bytecode = obj.bytecode;
+		this->l_endian = obj.l_endian;
+		this->b_endian = obj.b_endian;
+	}
+	const opcode_t& operator=(opcode_t& obj)
+	{
+		this->opcode_name = obj.opcode_name;
+		this->bytecode = obj.bytecode;
+		this->l_endian = obj.l_endian;
+		this->b_endian = obj.b_endian;
+		return *this;
 	}
 	
 	std::string opcode_name = ""; // the name of the opcode in std::string format
 	std::uint16_t bytecode = 0; // opcodes bytecode
-	std::uint16_t l_endian = 0; // little endian
-	std::uint16_t b_endian = 0; // big endian
-} opcode_t;
+	std::uint8_t l_endian = 0; // little endian
+	std::uint8_t b_endian = 0; // big endian
+};

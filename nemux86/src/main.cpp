@@ -15,5 +15,7 @@ std::int32_t main(std::int32_t argc, char* argv[])
 		nemu_ptr->run_nemu();
 	}
 
+	nemu_ptr->destroy_nemu();
+
 	return 1;
 }
