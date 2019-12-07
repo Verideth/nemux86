@@ -4,15 +4,11 @@
 #include <memory>
 #include <utility>
 
-void gather_opcodes(const std::uint8_t l_endian, const std::uint16_t bytecode, opcode_t& opcode_to_push)
+std::vector<opcode_t> opcodes_vector;
+void gather_opcodes(opcode_t& opcode_to_push)
 {
-	if (l_endian)
-	{
-		OPCODE_FUNCTIONALITY::opcode_execute(l_endian, bytecode);
-	}
-
-	c_nes_cpu::opcodes_vector.push_back(opcode_to_push);
-	return 1;
+	OPCODERUN(opcode_to_push);
+	opcodes_vector.push_back(opcode_to_push);
 }
 
 void c_nes_cpu::convert_mem_bytecode(const std::uint16_t location)
@@ -21,7 +17,12 @@ void c_nes_cpu::convert_mem_bytecode(const std::uint16_t location)
 	opcode.bytecode = (nemu_ptr->memory[location] << 8) | (nemu_ptr->memory[location + 1]); 
 	opcode.l_endian = (opcode.bytecode & 0x00FF);
 	opcode.b_endian = (opcode.bytecode & 0xFF00);
+	opcode.isolated_b_endian = opcode.b_endian >> 4; // isolates the b endian to itself.
 
-	gather_opcodes(opcode.l_endian, opcode.bytecode, opcode);
-	std::exchange(opcode, 0);
+	gather_opcodes(opcode);
+}
+
+void c_nes_cpu::setup_opcode_vector()
+{
+	this->opcode_vector = opcodes_vector;
 }

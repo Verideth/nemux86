@@ -11,8 +11,10 @@ void c_nes::run_cpu_clock()
 {
 	for (std::uint16_t loc_iterator = 0; loc_iterator < nemu_ptr->length; loc_iterator++)
 	{
-		c_nes_cpu::convert_mem_bytecode(loc_iterator);
+		nes_cpu.convert_mem_bytecode(loc_iterator);
 	}
+
+	nes_cpu.setup_opcode_vector();
 }
 
 void c_nes::destroy_nes()

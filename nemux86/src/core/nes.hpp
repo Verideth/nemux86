@@ -18,12 +18,13 @@ protected:
 	opcode_t cur_opcode;
 };
 
-class c_nes_cpu : c_nes
+static class c_nes_cpu : c_nes
 {
 public:
 	c_nes_cpu() = default;
 	/* converts the location (addres) bytecode, also sets up cur_opcode */
 	static void convert_mem_bytecode(const std::uint16_t location);
+	void setup_opcode_vector();
 
 	static opcode_t cur_opcode;
 	static std::stack<std::uint16_t> cpu_stack;
@@ -35,12 +36,12 @@ public:
 	static std::uint8_t p; // p register, aka status register
 	static std::uint16_t current_addressing_mode; // the current addressing mode id, defined in reg_flags.hpp
 	static FLAGS cur_flag;
-	static std::vector<opcode_t> opcodes_vector;
-	
+
 private:
 protected:
+	std::vector<opcode_t> opcode_vector;
 	OPCODE_HEX hexadecimal_identification;
-};
+} nes_cpu;
 
 namespace NES_MANIPULATION
 {
