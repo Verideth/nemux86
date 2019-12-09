@@ -2,7 +2,6 @@
 
 #include <fstream>
 #include <cstdint>
-#include "core/nes.hpp"
 #include <SFML/Graphics.hpp>
 #include <memory>
 

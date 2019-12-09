@@ -1,4 +1,5 @@
 #include "nemu_main.hpp"
+#include "core/nes.hpp"
 
 void c_nemu::fn_setup_file()
 {

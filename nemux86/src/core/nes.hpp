@@ -29,7 +29,6 @@ enum ADDRESSING_MODES
 
 static struct nes_str
 {
-public:
 	nes_str() = default;
 	void fn_initialize_nes();
 	void fn_run_cpu_clock();
@@ -43,7 +42,7 @@ static struct nes_cpu_str : nes_str
 {
 	nes_cpu_str() = default;
 	/* converts the location (address) bytecode, also sets up cur_opcode */
-	static void fn_convert_mem_bytecode(const std::uint16_t location);
+	void fn_convert_mem_bytecode(const std::uint16_t location);
 	void fn_setup_opcode_vector();
 
 	static opcode_t cur_opcode;
@@ -56,7 +55,7 @@ static struct nes_cpu_str : nes_str
 	std::uint8_t p; // p register, aka status register
 	std::uint16_t current_addressing_mode; // the current addressing mode id, defined in reg_flags.hpp
 
-	static std::int16_t fl_c, fl_z, fl_i, fl_n, fl_v, fl_b, fl_d;
+	std::int16_t fl_c, fl_z, fl_i, fl_n, fl_v, fl_b, fl_d;
 	
 protected:
 	std::vector<opcode_t> opcode_vector;
@@ -68,11 +67,11 @@ namespace NES_MANIPULATION
 	{
 		return nes_cpu.pc;
 	}
-	inline const void set_pc(std::uint16_t new_pc) noexcept
+	inline void gfn_set_pc(const std::uint16_t new_pc) noexcept
 	{
 		nes_cpu.pc = new_pc;
 	}
-	inline const void inc_pc() noexcept
+	inline void inc_pc() noexcept
 	{
 		nes_cpu.pc += 2;
 	}
@@ -81,21 +80,21 @@ namespace NES_MANIPULATION
 	{
 		return nes_cpu.a;
 	}
-	inline const void set_a(std::uint8_t new_a) noexcept
+	inline void set_a(const std::uint8_t new_a) noexcept
 	{
 		nes_cpu.a = new_a;
 	}
 
-	inline const std::uint8_t& get_sp() noexcept
+	inline const std::uint8_t& gfn_get_sp() noexcept
 	{
 		return nes_cpu.sp;
 	}
-	inline const void set_sp(std::uint8_t new_sp) noexcept
+	inline void gfn_set_sp(const std::uint8_t new_sp) noexcept
 	{
 		nes_cpu.sp = new_sp;
 	}
 
-	inline const std::uint16_t& get_x() noexcept
+	inline const std::uint16_t& gfn_get_x() noexcept
 	{
 		return nes_cpu.x;
 	}
@@ -104,7 +103,7 @@ namespace NES_MANIPULATION
 		nes_cpu.x = new_x;
 	}
 
-	inline const std::uint8_t& get_y() noexcept
+	inline const std::uint8_t& gfn_get_y() noexcept
 	{
 		return nes_cpu.y;
 	}

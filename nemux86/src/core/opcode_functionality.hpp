@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstdint>
 #include <vector>
 #include "nes.hpp"
@@ -9,8 +11,8 @@ namespace OPCODE_FUNCTIONALITY
 {
 	inline std::int16_t gfn_count_bytes(const std::uint16_t address)
 	{
-		std::vector<char> byte_data(address);
-		return byte_data.size();
+		const std::vector<char> byte_data(address);
+		return static_cast<std::int16_t>(byte_data.size());
 	}
 
 	inline void gfn_setzn(const std::uint16_t address)
@@ -52,7 +54,7 @@ namespace OPCODE_FUNCTIONALITY
 		{ORA_1, gfn_ora1},
 	};
 
-	inline void opcode_execute(opcode_t opcode_to_exec)
+	inline void opcode_execute(const opcode_t& opcode_to_exec)
 	{
 		switch (opcode_to_exec.l_endian)
 		{
@@ -63,9 +65,6 @@ namespace OPCODE_FUNCTIONALITY
 		default:
 			NES_MANIPULATION::inc_pc();
 		};
-
-		std::int32_t x = 0;
-		std::int32_t& y = x;
 	}
 
 }
