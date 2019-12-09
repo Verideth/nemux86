@@ -2,13 +2,13 @@
 
 #include <cstdint>
 
-struct vertex_t
+struct vertex_str
 {
 	std::int16_t x;
 	std::int16_t y;
 };
 
-struct sprite_t
+struct sprite_str
 {
 	void* sprite_data;
 	std::int16_t x_pos;

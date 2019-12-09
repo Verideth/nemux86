@@ -148,10 +148,9 @@
     <ClCompile Include="src\nemu_main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\core\functional\opcodes.hpp" />
-    <ClInclude Include="src\core\functional\opcodes_functional.hpp" />
-    <ClInclude Include="src\core\functional\reg_flags.hpp" />
+    <ClInclude Include="src\core\opcodes.hpp" />
     <ClInclude Include="src\core\nes.hpp" />
+    <ClInclude Include="src\core\opcode_functionality.hpp" />
     <ClInclude Include="src\engine\structures_types.hpp" />
     <ClInclude Include="src\nemu_main.hpp" />
   </ItemGroup>

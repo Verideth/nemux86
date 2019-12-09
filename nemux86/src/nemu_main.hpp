@@ -10,16 +10,15 @@ class c_nemu
 {
 public:
 	c_nemu() : length(0) {  }
-	void initialize_nemu(std::string& rom_file);
-	void run_nemu();
-	void destroy_nemu();
-	void setup_file();
+	void fn_initialize_nemu(std::string& rom_file);
+	void fn_run_nemu();
+	void fn_destroy_nemu() const;
+	void fn_setup_file();
 	bool running_on = false;
 	std::ifstream file;
 	std::int32_t length;
 	std::unique_ptr<std::uint8_t[]> memory;
 	std::string file_name;
-	c_nes nes_obj;
 
 private:
 	static std::unique_ptr<sf::RenderWindow> window;

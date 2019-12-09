@@ -1,8 +1,8 @@
 #include "nes.hpp"
 #include "../nemu_main.hpp"
-#include "functional/opcodes_functional.hpp"
 #include <memory>
-#include <utility>
+#include "opcodes.hpp"
+#include "opcode_functionality.hpp"
 
 std::vector<opcode_t> opcodes_vector;
 void gather_opcodes(opcode_t& opcode_to_push)
@@ -11,7 +11,7 @@ void gather_opcodes(opcode_t& opcode_to_push)
 	opcodes_vector.push_back(opcode_to_push);
 }
 
-void c_nes_cpu::convert_mem_bytecode(const std::uint16_t location)
+void nes_cpu_str::fn_convert_mem_bytecode(const std::uint16_t location)
 {
 	opcode_t opcode;
 	opcode.bytecode = (nemu_ptr->memory[location] << 8) | (nemu_ptr->memory[location + 1]); 
@@ -22,7 +22,7 @@ void c_nes_cpu::convert_mem_bytecode(const std::uint16_t location)
 	gather_opcodes(opcode);
 }
 
-void c_nes_cpu::setup_opcode_vector()
+void nes_cpu_str::fn_setup_opcode_vector()
 {
 	this->opcode_vector = opcodes_vector;
 }

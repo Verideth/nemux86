@@ -35,16 +35,13 @@
     <ClInclude Include="src\engine\structures_types.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\functional\opcodes.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\core\nes.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\functional\opcodes_functional.hpp">
+    <ClInclude Include="src\core\opcodes.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\functional\reg_flags.hpp">
+    <ClInclude Include="src\core\opcode_functionality.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,100 +3,122 @@
 #include <cstdint>
 #include <vector>
 #include <stack>
-#include "functional/opcodes.hpp"
-#include "functional/reg_flags.hpp"
+#include "opcodes.hpp"
 
-class c_nes
+/* not sure if i'll implement this enum yet */
+enum REGISTERS
 {
-public:
-	static void initialize_nes();
-	static void run_cpu_clock();
-	static void destroy_nes();
-
-protected:
-	static std::stack<std::uint8_t> nes_stack;
-	opcode_t cur_opcode;
+	A_REG = 0x01, // byte wide accumlator
+	X_REG = 0x02, // byte wide, general purpose
+	Y_REG = 0x03, // byte wide, 
+	PC_REG = 0x04, // program counter
+	SP_REG = 0x05, // stack pointer
+	P_REG = 0x06 // register used by the ALU, used in logic, arithmetic, and branch instructions.
+				// known as the "status register" according to nesdev
 };
 
-static class c_nes_cpu : c_nes
+enum ADDRESSING_MODES
+{
+	ZPI_X = 0x01, // zero page indexed d, x
+	ZPI_Y = 0x02, // zero page indexed d, y
+	ABSINDEX_X = 0x03, // absolute index d, x
+	ABSINDEX_Y = 0x04, // absolute index d, y
+	INDEXINDIR_X = 0x05, // index indirect d, x
+	INDEXINDIR_Y = 0x06 // index indirect d, y
+};
+
+static struct nes_str
 {
 public:
-	c_nes_cpu() = default;
-	/* converts the location (addres) bytecode, also sets up cur_opcode */
-	static void convert_mem_bytecode(const std::uint16_t location);
-	void setup_opcode_vector();
+	nes_str() = default;
+	void fn_initialize_nes();
+	void fn_run_cpu_clock();
+	void fn_destroy_nes();
+
+protected:
+	opcode_t cur_opcode;
+} nes;
+
+static struct nes_cpu_str : nes_str
+{
+	nes_cpu_str() = default;
+	/* converts the location (address) bytecode, also sets up cur_opcode */
+	static void fn_convert_mem_bytecode(const std::uint16_t location);
+	void fn_setup_opcode_vector();
 
 	static opcode_t cur_opcode;
-	static std::stack<std::uint16_t> cpu_stack;
-	static std::uint16_t pc; // program counter, 16 bit number 
-	static std::uint8_t a; // a general purpose register, 8 bit number
-	static std::uint8_t sp; // stack pointer
-	static std::uint8_t x; // x general purpose register
-	static std::uint8_t y; // y general purpose register
-	static std::uint8_t p; // p register, aka status register
-	static std::uint16_t current_addressing_mode; // the current addressing mode id, defined in reg_flags.hpp
-	static FLAGS cur_flag;
+	std::stack<std::uint16_t> cpu_stack;
+	std::uint16_t pc; // program counter, 16 bit number 
+	std::uint8_t a; // a general purpose register, 8 bit number
+	std::uint8_t sp; // stack pointer
+	std::uint8_t x; // x general purpose register
+	std::uint8_t y; // y general purpose register
+	std::uint8_t p; // p register, aka status register
+	std::uint16_t current_addressing_mode; // the current addressing mode id, defined in reg_flags.hpp
 
-private:
+	static std::int16_t fl_c, fl_z, fl_i, fl_n, fl_v, fl_b, fl_d;
+	
 protected:
 	std::vector<opcode_t> opcode_vector;
-	OPCODE_HEX hexadecimal_identification;
 } nes_cpu;
 
 namespace NES_MANIPULATION
 {
 	inline const std::uint16_t& get_pc() noexcept
 	{
-		return c_nes_cpu::pc;
+		return nes_cpu.pc;
 	}
 	inline const void set_pc(std::uint16_t new_pc) noexcept
 	{
-		c_nes_cpu::pc = new_pc;
+		nes_cpu.pc = new_pc;
 	}
-	inline const void inc_pc() noexcept { c_nes_cpu::pc += 2; }
+	inline const void inc_pc() noexcept
+	{
+		nes_cpu.pc += 2;
+	}
 
 	inline const std::uint8_t& get_a() noexcept
 	{
-		return c_nes_cpu::a;
+		return nes_cpu.a;
 	}
 	inline const void set_a(std::uint8_t new_a) noexcept
 	{
-		c_nes_cpu::a = new_a;
+		nes_cpu.a = new_a;
 	}
 
 	inline const std::uint8_t& get_sp() noexcept
 	{
-		return c_nes_cpu::sp;
+		return nes_cpu.sp;
 	}
 	inline const void set_sp(std::uint8_t new_sp) noexcept
 	{
-		c_nes_cpu::sp = new_sp;
+		nes_cpu.sp = new_sp;
 	}
 
 	inline const std::uint16_t& get_x() noexcept
 	{
-		return c_nes_cpu::x;
+		return nes_cpu.x;
 	}
-	inline const void set_x(std::uint8_t new_x) noexcept
+	inline void gfn_set_x(const std::uint8_t new_x) noexcept
 	{
-		c_nes_cpu::x = new_x;
+		nes_cpu.x = new_x;
 	}
 
 	inline const std::uint8_t& get_y() noexcept
 	{
-		return c_nes_cpu::y;
+		return nes_cpu.y;
 	}
-	inline const void set_y(std::uint8_t new_y) noexcept
+	inline void gfn_set_y(const std::uint8_t new_y) noexcept
 	{
-		c_nes_cpu::y = new_y;
+		nes_cpu.y = new_y;
 	}
 
 	inline const std::uint8_t& get_p() noexcept
 	{
-		return c_nes_cpu::p;
+		return nes_cpu.p;
 	}
-	inline const void set_p(std::uint8_t new_p) noexcept
+	inline void set_p(const std::uint8_t new_p) noexcept
 	{
-		c_nes_cpu::p = new_p;
+		nes_cpu.p = new_p;
 	}
 }

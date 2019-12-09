@@ -1,6 +1,6 @@
 #include "nemu_main.hpp"
 
-void c_nemu::setup_file()
+void c_nemu::fn_setup_file()
 {
 	this->file.open(this->file_name, std::ios::in | std::ios::binary);
 
@@ -15,20 +15,20 @@ void c_nemu::setup_file()
 	this->file.read(reinterpret_cast<char*>(this->memory.get()), this->length);
 }
 
-void c_nemu::initialize_nemu(std::string& rom_file)
+void c_nemu::fn_initialize_nemu(std::string& rom_file)
 {
 	this->file_name = rom_file;
-	this->setup_file();
+	this->fn_setup_file();
 	this->running_on = true;
-	nes_obj.run_cpu_clock();
+	nes.fn_run_cpu_clock();
 }
 
-void c_nemu::run_nemu()
+void c_nemu::fn_run_nemu()
 {
 
 }
 
-void c_nemu::destroy_nemu()
+void c_nemu::fn_destroy_nemu() const
 {
-	this->nes_obj.destroy_nes();
+	nes.fn_destroy_nes();
 }

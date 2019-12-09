@@ -2,7 +2,9 @@
 
 #include <cstdint>
 #include <string>
-#include <utility>
+#include <cstdint>
+
+#define OPCODERUN OPCODE_FUNCTIONALITY::opcode_execute
 
 // EACH NUMBER AT THE END OF AN INSTRUCTION 
 // EXAMPLE SLO_3, 3 BEING THE NUMBER, SHOWS
@@ -294,19 +296,22 @@ struct opcode_t
 		this->bytecode = obj.bytecode;
 		this->l_endian = obj.l_endian;
 		this->b_endian = obj.b_endian;
+		this->isolated_b_endian = obj.isolated_b_endian;
 	}
+	
 	const opcode_t& operator=(opcode_t& obj)
 	{
 		this->opcode_name = obj.opcode_name;
 		this->bytecode = obj.bytecode;
 		this->l_endian = obj.l_endian;
 		this->b_endian = obj.b_endian;
+		this->isolated_b_endian = obj.isolated_b_endian;
 		return *this;
 	}
 	
 	std::string opcode_name = ""; // the name of the opcode in std::string format
 	std::uint16_t bytecode = 0; // opcodes bytecode
-	std::uint16_t l_endian = 0; // little endian
+	std::uint8_t l_endian = 0; // little endian
 	std::uint16_t b_endian = 0; // big endian
-	std::uint8_t isolated_b_endian; // big endian in 2 bits using shift logic.
+	std::uint8_t isolated_b_endian = 0; // big endian in 2 bits using shift logic.
 };
