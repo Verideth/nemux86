@@ -134,6 +134,8 @@ struct registers_stru
 		 *
 		 * this will set the vram address to 0x2108
 		 */
+
+		flags_address_stru() = default;
 		
 		/* HI BITS */
 		std::uint8_t high_byte_write = 0; // high byte to write, in the example above this is 0x21
@@ -149,6 +151,8 @@ struct registers_stru
 	 */
 	static struct flags_vramdata_stru
 	{
+		flags_vramdata_stru() = default;
+		
 		/* HI BITS */
 		std::uint8_t high_byte_write = 0;
 		/* LO BITS */
@@ -164,6 +168,8 @@ struct registers_stru
 	 */
 	static struct flags_oamdma_stru
 	{
+		flags_oamdma_stru() = default;
+
 		/* HI BITS */
 		std::uint16_t high_byte_write = 0;
 		/* LO BITS */
