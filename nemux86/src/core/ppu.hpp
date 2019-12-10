@@ -164,7 +164,7 @@ struct registers_stru
 	 * the OAMDMA register, according to nesdev, the
 	 * port is located on the CPU itself. writing 0xNN
 	 * will send 256 bytes from the page 0xNN00 - 0xNNFF
-	 * to the PPU OAM ADDR
+	 * to the PPU OAM address port
 	 */
 	static struct flags_oamdma_stru
 	{
