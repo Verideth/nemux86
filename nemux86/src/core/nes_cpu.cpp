@@ -28,8 +28,3 @@ void nes_cpu_stru::fn_setup_opcode_vector()
 {
 	this->opcode_vector = g_opcodes_vector;
 }
-
-std::int16_t nes_cpu_stru::fn_read_value(std::uint16_t address, std::int16_t and_value)
-{
-	return g_nemu_ptr->memory[address & and_value];
-} 

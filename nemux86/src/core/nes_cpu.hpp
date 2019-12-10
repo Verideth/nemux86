@@ -12,7 +12,6 @@ static struct nes_cpu_stru : nes_stru
 	/* converts the location (address) bytecode, also sets up cur_opcode */
 	void fn_convert_mem_bytecode(const std::uint16_t location);
 	void fn_setup_opcode_vector();
-	std::int16_t fn_read_value(std::uint16_t address, std::int16_t and_value);
 
 	static opcode_stru cur_opcode;
 	std::stack<std::uint16_t> cpu_stack;

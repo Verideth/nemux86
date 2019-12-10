@@ -21,6 +21,7 @@ void c_nemu::fn_initialize_nemu(std::string& rom_file)
 	this->file_name = rom_file;
 	this->fn_setup_file();
 	this->running_on = true;
+	g_nes.fn_initialize_nes();
 	g_nes.fn_run_cpu_clock();
 }
 
