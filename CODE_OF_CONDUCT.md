@@ -5,7 +5,7 @@
 In an effort to help stop toxicity and negativity on the internet, I have created this
 to all those who wish to contribute to the open source project, that is nemux86. If posting,
 you will not respond negatively, debilitatingly, or uselessly to another individual that contributes
-or posts to nemux86. Or risk being blocked from contributing again.
+or posts to nemux86. Or risk being barred from contributing again.
 
 ## Community Standards
 
