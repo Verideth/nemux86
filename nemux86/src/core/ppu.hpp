@@ -6,18 +6,16 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics.hpp>
 
-enum PIPELINE_STATES
+enum PIPELINE_STATES_E
 {
 	
 };
 
-namespace PPU_FUNCTIONS
+enum OAM_READ_FROM_E
 {
-	inline void gfn_read_ppu_x(std::int16_t address)
-	{
-		
-	}
-}
+	PRIMARY_OAM = 1,
+	SECONDARY_OAM = 2
+};
 
 /* ppu register structure, for handling register objects */
 struct registers_stru
@@ -29,11 +27,12 @@ struct registers_stru
 	 * information about various controlling flags
 	 * inside of the ppu
 	 */
-	static struct flags_ctrl_stru
+	struct flags_ctrl_stru
 	{
 		flags_ctrl_stru() = default;
+		std::uint8_t bytecode = 0;
 		/* HI BITS */
-		std::uint8_t v = 0; // generates an NMI if 1. 0 is off.
+		std::uint8_t v = 1; // generates an NMI if 1. 0 is off.
 		std::uint8_t master_save_select = 0; // 0 read color from EXT pins, 1 output color on EXT pins
 		std::uint8_t sprite_size = 0; // 8x8 pixels, or 8x16 pixels
 		std::uint16_t background_pattern_table = 0; // 0: 0x1000, 1: 0x2000
@@ -52,9 +51,10 @@ struct registers_stru
 	 * this register handles sprite coloring, backgrounds
 	 * and according to nesdev, color effects as well.
 	 */
-	static struct flags_mask_stru
+	struct flags_mask_stru
 	{
 		flags_mask_stru() = default;
+		std::uint8_t bytecode = 0;
 		/* HI BITS */
 		std::uint8_t blue = 0; // blue color
 		std::uint8_t green = 0; // green color
@@ -75,9 +75,10 @@ struct registers_stru
 	 * (IMPLEMENT LATER(?))
 	 * handles the OAM address port
 	 */
-	static struct flags_read_stru
+	struct flags_read_stru
 	{
 		flags_read_stru() = default;
+		std::uint8_t bytecode = 0;
 		std::int16_t write_address = 0x0000; // the address you want the OAM to write to
 		
 		/* NESDEV didn't give much info but apparently
@@ -94,10 +95,10 @@ struct registers_stru
 	 * OAMADDR address
 	 * wries to this will increment the OAMADDR
 	 */
-	static struct flags_data_stru
+	struct flags_data_stru
 	{
 		flags_data_stru() = default;
-		
+		std::uint8_t bytecode = 0;
 	} ppu_oamdata;
 
 	/*
@@ -106,9 +107,11 @@ struct registers_stru
 	 * (aka where you move and the landscape changes as
 	 * you move)
 	 */
-	static struct flags_scroll_stru
+	struct flags_scroll_stru
 	{
 		flags_scroll_stru() = default;
+		std::uint8_t bytecode = 0;
+		
 		std::int16_t x = 0; // x value of the scroll position
 		std::int16_t y = 0; // y value of the scroll position
 	} ppu_scroll;
@@ -122,7 +125,7 @@ struct registers_stru
 	 * first, it loads the address into PPUADDR, then
 	 * uses this to write to it.
 	 */
-	static struct flags_address_stru
+	struct flags_address_stru
 	{
 		/*
 		 * EXAMPLE OF IT IN USE ON 6502 ASSEMBLER:
@@ -136,6 +139,7 @@ struct registers_stru
 		 */
 
 		flags_address_stru() = default;
+		std::uint8_t bytecode = 0;
 		
 		/* HI BITS */
 		std::uint8_t high_byte_write = 0; // high byte to write, in the example above this is 0x21
@@ -149,9 +153,10 @@ struct registers_stru
 	 * this register the video memory (VRAM)
 	 * will increment by one.
 	 */
-	static struct flags_vramdata_stru
+	struct flags_vramdata_stru
 	{
 		flags_vramdata_stru() = default;
+		std::uint8_t bytecode = 0;
 		
 		/* HI BITS */
 		std::uint8_t high_byte_write = 0;
@@ -166,9 +171,10 @@ struct registers_stru
 	 * will send 256 bytes from the page 0xNN00 - 0xNNFF
 	 * to the PPU OAM address port
 	 */
-	static struct flags_oamdma_stru
+	struct flags_oamdma_stru
 	{
 		flags_oamdma_stru() = default;
+		std::uint8_t bytecode = 0;
 
 		/* HI BITS */
 		std::uint16_t high_byte_write = 0;
@@ -183,10 +189,8 @@ static struct nes_ppu_stru
 {
 	void fn_init_ppu();
 	void fn_run_ppu();
-	void fn_do_scroll();
 	void fn_draw_sprite(sf::Vector2f& position, void* sprite_data);
 	void fn_store_sprite(std::vector<sf::Sprite>& vector_to_store);
-	void fn_get_pattern_data();
 
 	std::int16_t ppu_ctrl_reg = 0;
 	std::int16_t ppu_mask_reg = 0;
@@ -195,11 +199,15 @@ static struct nes_ppu_stru
 	std::int16_t ppu_scroll_reg = 0;
 	std::int16_t ppu_addr_reg = 0;
 	std::int16_t ppu_data_reg = 0;
-
+	
 	std::uint16_t cur_cycle = 0;
 	registers_stru registers;
 
+private:
 	std::vector<sf::Sprite> sprites;
 	std::vector<sf::Sprite> sprites_to_draw;
 	std::map<std::int32_t, void*> sprite_map_data;
+	void fn_init_registers();
+	void fn_do_scroll();
+	void fn_get_pattern_data();
 } g_nes_ppu;

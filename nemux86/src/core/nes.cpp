@@ -6,7 +6,6 @@
 
 void nes_stru::fn_initialize_nes()
 {
-	g_nes_cpu.fn_initialize_nes();
 	g_nes_ppu.fn_init_ppu();
 }
 

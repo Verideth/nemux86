@@ -31,8 +31,8 @@ namespace OPCODE_FUNCTIONALITY
 {
 	inline void gfn_setzn(const std::uint16_t address)
 	{
-		g_nes_cpu.fl_z = !address;
-		g_nes_cpu.fl_n = address & 0x80;
+		g_nes_cpu.registers.fl_z = !address;
+		g_nes_cpu.registers.fl_n = address & 0x80;
 	}
 
 	enum class LOHI_E { LOW, HIGH };
@@ -46,18 +46,21 @@ namespace OPCODE_FUNCTIONALITY
 
 	inline void gfn_brk()
 	{
-		NES_MANIPULATION::inc_pc();
-		g_nes_cpu.cpu_stack.push(g_nes_cpu.pc);
-		g_nes_cpu.cpu_stack.push(g_nes_cpu.p | 0x10);
+		NES_MANIPULATION::gfn_inc_pc();
+		g_nes_cpu.cpu_stack.push(g_nes_cpu.registers.pc);
+		g_nes_cpu.cpu_stack.push(g_nes_cpu.registers.p | 0x10);
 		/* finish BRK function */
 	}
 
 	inline std::uint8_t gfn_ora(std::int16_t bytecode)
 	{
-		return g_nes_cpu.a;
+		return g_nes_cpu.registers.a;
 	}
 
-	inline void gfn_nop() {  }
+	inline void gfn_nop()
+	{
+		NES_MANIPULATION::gfn_inc_pc(); 
+	}
 
 	template <class FN_T>
 	static const std::map<OPCODE_HEX, std::function<FN_T()>> operational_functions =
@@ -68,7 +71,7 @@ namespace OPCODE_FUNCTIONALITY
 	inline void gfn_opcode_execute(const opcode_stru& opcode_to_exec)
 	{
 		const std::uint8_t address_mode = ((opcode_to_exec.bytecode & - ADDRESS_MODE_MASK) >> ADDRESS_MODE_MASK);
-		g_nes_cpu.current_addressing_mode = address_mode;
+		g_nes_cpu.registers.current_addressing_mode = address_mode;
 
 		switch (address_mode)
 		{
@@ -81,7 +84,7 @@ namespace OPCODE_FUNCTIONALITY
 		case NOP_1: gfn_nop(); break;
 
 		default:
-			NES_MANIPULATION::inc_pc();
+			NES_MANIPULATION::gfn_inc_pc();
 		};
 	}
 
