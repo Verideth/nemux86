@@ -15,12 +15,12 @@ void nes_ppu_stru::fn_do_scroll()
 {
 }
 
-void nes_ppu_stru::fn_draw_sprite(sf::Vector2f position, void* sprite_data)
+void nes_ppu_stru::fn_draw_sprite(sf::Vector2f& position, void* sprite_data)
 {
 	
 }
 
-void nes_ppu_stru::fn_store_sprite(std::vector<sf::Sprite> vector_to_store)
+void nes_ppu_stru::fn_store_sprite(std::vector<sf::Sprite>& vector_to_store)
 {
 	
 }

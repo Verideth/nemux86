@@ -5,7 +5,10 @@ void c_nemu::fn_setup_file()
 {
 	this->file.open(this->file_name, std::ios::in | std::ios::binary);
 
-	if (!this->file.is_open()) { std::printf("FAILED TO LOAD ROM %s\n", this->file_name.c_str()); }
+	if (!this->file.is_open())
+	{
+		std::printf("FAILED TO LOAD ROM %s\n", this->file_name.c_str());
+	}
 
 	this->file.seekg(0, this->file.end);
 	this->length = static_cast<std::int32_t>(this->file.tellg());

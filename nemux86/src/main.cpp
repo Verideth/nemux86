@@ -17,5 +17,5 @@ std::int32_t main(std::int32_t argc, char* argv[])
 
 	g_nemu_ptr->fn_destroy_nemu();
 
-	return 1;
+	return 0;
 }

@@ -184,8 +184,8 @@ static struct nes_ppu_stru
 	void fn_init_ppu();
 	void fn_run_ppu();
 	void fn_do_scroll();
-	void fn_draw_sprite(sf::Vector2f position, void* sprite_data);
-	void fn_store_sprite(std::vector<sf::Sprite> vector_to_store);
+	void fn_draw_sprite(sf::Vector2f& position, void* sprite_data);
+	void fn_store_sprite(std::vector<sf::Sprite>& vector_to_store);
 	void fn_get_pattern_data();
 
 	std::int16_t ppu_ctrl_reg = 0;
