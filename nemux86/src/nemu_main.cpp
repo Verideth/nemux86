@@ -21,7 +21,7 @@ void c_nemu::fn_initialize_nemu(std::string& rom_file)
 	this->file_name = rom_file;
 	this->fn_setup_file();
 	this->running_on = true;
-	nes.fn_run_cpu_clock();
+	g_nes.fn_run_cpu_clock();
 }
 
 void c_nemu::fn_run_nemu()
@@ -31,5 +31,5 @@ void c_nemu::fn_run_nemu()
 
 void c_nemu::fn_destroy_nemu() const
 {
-	nes.fn_destroy_nes();
+	g_nes.fn_destroy_nes();
 }

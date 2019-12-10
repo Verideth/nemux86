@@ -6,19 +6,33 @@
 #include <map>
 #include "opcodes.hpp"
 #include <functional>
+#include "nes_cpu.hpp"
+
+constexpr std::int16_t ADDRESS_MODE_MASK = 0x1C;;
+constexpr std::int16_t ADDRESS_MODE_SHIFT = 2;
+
+enum ADDRESS_MODES_INDEXED_E
+{
+	ZERO_PAGE_INDEX_X,
+	ZERO_PAGE_INDEX_Y,
+	ABS_INDEX_X,
+	ABS_INDEX_Y,
+	INDEX_INDIR_X,
+	INDEX_INDIR_Y
+};
+
+enum ADDRESS_MODES_NOINDEX_E
+{
+	IMMEDIATE,
+	
+};
 
 namespace OPCODE_FUNCTIONALITY
 {
-	inline std::int16_t gfn_count_bytes(const std::uint16_t address)
-	{
-		const std::vector<char> byte_data(address);
-		return static_cast<std::int16_t>(byte_data.size());
-	}
-
 	inline void gfn_setzn(const std::uint16_t address)
 	{
-		nes_cpu.fl_z = !address;
-		nes_cpu.fl_n = address & 0x80;
+		g_nes_cpu.fl_z = !address;
+		g_nes_cpu.fl_n = address & 0x80;
 	}
 
 	enum class LOHI_E { LOW, HIGH };
@@ -33,17 +47,14 @@ namespace OPCODE_FUNCTIONALITY
 	inline void gfn_brk()
 	{
 		NES_MANIPULATION::inc_pc();
-		nes_cpu.cpu_stack.push(nes_cpu.pc);
-		nes_cpu.cpu_stack.push(nes_cpu.p | 0x10);
+		g_nes_cpu.cpu_stack.push(g_nes_cpu.pc);
+		g_nes_cpu.cpu_stack.push(g_nes_cpu.p | 0x10);
 		/* finish BRK function */
 	}
 
-	inline std::uint8_t gfn_ora1(std::int16_t bytecode)
+	inline std::uint8_t gfn_ora(std::int16_t bytecode)
 	{
-		const std::uint8_t operand = gfn_retrieve_byte(bytecode, LOHI_E::LOW);
-		nes_cpu.a |= operand;
-
-		return nes_cpu.a;
+		return g_nes_cpu.a;
 	}
 
 	inline void gfn_nop() {  }
@@ -51,14 +62,21 @@ namespace OPCODE_FUNCTIONALITY
 	template <class FN_T>
 	static const std::map<OPCODE_HEX, std::function<FN_T()>> operational_functions =
 	{
-		{ORA_1, gfn_ora1},
+		{ORA_1, gfn_ora},
 	};
 
-	inline void opcode_execute(const opcode_t& opcode_to_exec)
+	inline void gfn_opcode_execute(const opcode_stru& opcode_to_exec)
 	{
+		const std::uint8_t address_mode = ((opcode_to_exec.bytecode & - ADDRESS_MODE_MASK) >> ADDRESS_MODE_MASK);
+		g_nes_cpu.current_addressing_mode = address_mode;
+
+		switch (address_mode)
+		{
+			
+		}
 		switch (opcode_to_exec.l_endian)
 		{
-		case ORA_1: gfn_ora1(opcode_to_exec.bytecode); break;
+		case ORA_1: gfn_ora(opcode_to_exec.bytecode); break;
 			/* get the functionality for the opcodes in between */
 		case NOP_1: gfn_nop(); break;
 

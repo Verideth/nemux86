@@ -23,4 +23,4 @@ private:
 	static std::unique_ptr<sf::RenderWindow> window;
 };
 
-extern std::unique_ptr<c_nemu> nemu_ptr;
+extern std::unique_ptr<c_nemu> g_nemu_ptr;

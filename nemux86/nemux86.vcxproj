@@ -144,14 +144,16 @@
   <ItemGroup>
     <ClCompile Include="src\core\nes.cpp" />
     <ClCompile Include="src\core\nes_cpu.cpp" />
+    <ClCompile Include="src\core\ppu.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\nemu_main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\nes_cpu.hpp" />
     <ClInclude Include="src\core\opcodes.hpp" />
     <ClInclude Include="src\core\nes.hpp" />
     <ClInclude Include="src\core\opcode_functionality.hpp" />
-    <ClInclude Include="src\engine\structures_types.hpp" />
+    <ClInclude Include="src\core\ppu.hpp" />
     <ClInclude Include="src\nemu_main.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

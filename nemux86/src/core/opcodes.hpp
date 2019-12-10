@@ -4,8 +4,6 @@
 #include <string>
 #include <cstdint>
 
-#define OPCODERUN OPCODE_FUNCTIONALITY::opcode_execute
-
 // EACH NUMBER AT THE END OF AN INSTRUCTION 
 // EXAMPLE SLO_3, 3 BEING THE NUMBER, SHOWS
 // WHAT THE OVERRIDE INDEX IS. EACH INSTRUCTION
@@ -15,7 +13,7 @@
 // 
 // (SOME ARE THE SAME INSTRUCTION ALSO,
 // FOR EXAMPLE, NOP_9 IS EQUIVALENT TO NOP_10, 
-// TAKING THE SAME REGISTERS, AND RETURNING THE
+// TAKING THE SAME REGISTERS_E, AND RETURNING THE
 // SAME FUNCTIONAL)
 // KEY:
 // KEY::
@@ -286,11 +284,11 @@ enum OPCODE_HEX
 };
 
 // structure for managing opcodes
-struct opcode_t
+struct opcode_stru
 {
-	opcode_t() = default;
-	~opcode_t() = default;
-	opcode_t(const opcode_t& obj)
+	opcode_stru() = default;
+	~opcode_stru() = default;
+	opcode_stru(const opcode_stru& obj)
 	{
 		this->opcode_name = obj.opcode_name;
 		this->bytecode = obj.bytecode;
@@ -299,7 +297,7 @@ struct opcode_t
 		this->isolated_b_endian = obj.isolated_b_endian;
 	}
 	
-	const opcode_t& operator=(opcode_t& obj)
+	const opcode_stru& operator=(opcode_stru& obj)
 	{
 		this->opcode_name = obj.opcode_name;
 		this->bytecode = obj.bytecode;
