@@ -71,6 +71,39 @@ struct registers_stru
 	} ppu_mask;
 
 	/*
+	 * PPUSTATUS
+	 * this register, according to nesdev
+	 * reflects varius "states" for the
+	 * functions inside of the PPU.
+	 * apparently its often used for timing.
+	 */
+	struct flags_status_stru
+	{
+		flags_status_stru() = default;
+		std::uint8_t bytecode = 0;
+
+		/* HI BITS */
+		std::uint8_t v = 0; // 0: not in vblank, 1: in vblank,
+							// according to nesdev vblank stands
+							// for vertical blank, which is a flag
+							// for generating a video display to be used
+							// by the nes itself.
+		std::uint8_t s = 0; // sprite 0 hit. set when a nonzero pixel
+							// of sprite index 0 overlaps a nonzero
+							// background pixel. used for rastar timing.
+							// as well as to see if a sprite could
+							// draw on the vertical blank.
+							// could be created on to the vertical blank
+		std::uint8_t o = 0; // sprite overflow. 0: no 1: yes
+							// this flag checks if there are more
+							// than eight sprites on a scanline.
+							// apparently hardware bugs will make
+							// it generate false positives, as
+							// well as false negatives.
+							// this flag is also set at sprite evals
+	} ppu_status;
+
+	/*
 	 * OAMADDR
 	 * (IMPLEMENT LATER(?))
 	 * handles the OAM address port
@@ -144,8 +177,8 @@ struct registers_stru
 		/* HI BITS */
 		std::uint8_t high_byte_write = 0; // high byte to write, in the example above this is 0x21
 		/* LO BITS */
-		std::uint8_t low_bytes_write = 0; // low byte to write, in the example above this is 0x08
-	} ppu_ppuaddr;
+		std::uint8_t low_byte_write = 0; // low byte to write, in the example above this is 0x08
+	} ppu_addr;
 
 	/*
 	 * PPUDATA
@@ -162,7 +195,7 @@ struct registers_stru
 		std::uint8_t high_byte_write = 0;
 		/* LO BITS */
 		std::uint8_t low_byte_write = 0;
-	} ppu_ppudata;
+	} ppu_data;
 
 	/*
 	 * OAMDMA
