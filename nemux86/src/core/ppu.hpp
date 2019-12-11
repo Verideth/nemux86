@@ -43,7 +43,7 @@ struct registers_stru
 
 		/* LOWEST 2 BITS, 0xXYNN */
 		std::uint16_t nametable_addresses = 0; // 0: 0x2000, 1: 0x2400
-											   // 2(?): 0x2800, 3(?): 0x2C00
+											// 2(?): 0x2800, 3(?): 0x2C00
 	} ppu_ctrl;
 
 	/*
@@ -64,9 +64,9 @@ struct registers_stru
 		/* LO BITS */
 		std::uint8_t show_background = 0; // show background
 		std::uint8_t show_sprites_leftmost_screen = 0; // show sprites at the leftmost (8 pixels)
-													   // screen 0: hide, 1: show
+													// screen 0: hide, 1: show
 		std::uint8_t show_background_leftmost_screen = 0; // show background at leftmost (8 pixels)
-														  // of screen, 0: hide, 1: show
+														// of screen, 0: hide, 1: show
 		std::uint8_t grayscale = 0; // grayscale the colors. 0: off, 1: on
 	} ppu_mask;
 
