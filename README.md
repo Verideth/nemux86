@@ -1,3 +1,5 @@
+![nemux86](https://i.imgur.com/dmwvVEa.jpg)
+
 # nemux86
 A simple, small NES emulator (currently in progress) written using modern C++11.
 
