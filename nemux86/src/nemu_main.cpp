@@ -1,5 +1,7 @@
 #include "nemu_main.hpp"
 #include "core/nes.hpp"
+#include "core/ppu.hpp"
+#include "core/nes_cpu.hpp"
 
 void c_nemu::fn_setup_file()
 {
@@ -21,16 +23,35 @@ void c_nemu::fn_setup_file()
 
 void c_nemu::fn_initialize_nemu(std::string& rom_file)
 {
+	this->window.create(sf::VideoMode(800, 600), "NEMUX86");
 	this->file_name = rom_file;
 	this->fn_setup_file();
 	this->running_on = true;
 	g_nes.fn_initialize_nes();
-	g_nes.fn_run_cpu_clock();
 }
 
 void c_nemu::fn_run_nemu()
 {
+	while (this->window.isOpen())
+	{
+		auto ev = sf::Event();
+		g_nes_ppu.fn_run_ppu();
+		
+		while (this->window.pollEvent(ev))
+		{
+			switch (ev.type)
+			{
+			case sf::Event::Closed:
+				this->window.close();
+				g_nemu_ptr->running_on = false;
+				break;
+			default:
+				break;
+			}
+		}
 
+		this->window.display();
+	}
 }
 
 void c_nemu::fn_destroy_nemu() const

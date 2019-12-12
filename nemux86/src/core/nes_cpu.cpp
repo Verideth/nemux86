@@ -13,6 +13,11 @@ void gather_opcodes(opcode_stru& opcode_to_push)
 	g_opcodes_vector.push_back(opcode_to_push);
 }
 
+void nes_cpu_stru::fn_initialize_cpu()
+{
+	this->fn_setup_opcode_vector();
+}
+
 void nes_cpu_stru::fn_convert_mem_bytecode(const std::uint16_t location)
 {
 	opcode_stru opcode;

@@ -15,6 +15,7 @@ std::int32_t main(std::int32_t argc, char* argv[])
 		g_nemu_ptr->fn_run_nemu();
 	}
 
+	g_nemu_ptr->running_on = false;
 	g_nemu_ptr->fn_destroy_nemu();
 
 	return 0;

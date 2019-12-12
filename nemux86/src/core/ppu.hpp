@@ -6,9 +6,19 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics.hpp>
 
-enum PIPELINE_STATES_E
+#define LEFT_TABLE_START 0x0000 // starts at 0x0000
+#define LEFT_TABLE_END 0x0FFF // left table ends at 0x0FFF
+#define RIGHT_TABLE_START 0x1000 // right table starts at 0x1000
+#define RIGHT_TABLE_END 0x1FFF // right table ends at 0x1FFF
+
+#define SCANLINE_END 321
+
+enum class PIPELINE_STATES_E
 {
-	
+	PRERENDER,
+	RENDER,
+	QUIT_RENDER,
+	VERTICAL_BLANK
 };
 
 enum OAM_READ_FROM_E
@@ -66,7 +76,7 @@ struct registers_stru
 		std::uint8_t show_sprites_leftmost_screen = 0; // show sprites at the leftmost (8 pixels)
 													// screen 0: hide, 1: show
 		std::uint8_t show_background_leftmost_screen = 0; // show background at leftmost (8 pixels)
-														// of screen, 0: hide, 1: show
+													// of screen, 0: hide, 1: show
 		std::uint8_t grayscale = 0; // grayscale the colors. 0: off, 1: on
 	} ppu_mask;
 
@@ -217,30 +227,54 @@ struct registers_stru
 	} ppu_oamdma;
 };
 
+/*
+ * PATTERN TABLE STRUCTURE
+ * this structure is the base structure for how
+ * pixels are stored and read inside of the NES.
+ *
+ * each pattern table holds a set of data
+ * for the pixel data. which then draws sprites.
+ */
+struct pattern_table_stru
+{
+	pattern_table_stru() = default;
+	std::uint8_t what_half = 0; // 0: left
+								// 1: right
+	std::uint8_t tile_row = 0; // what row the pixel is on
+	std::uint8_t column = 0; // what column the pixel lies on
+	std::uint8_t bit_plane = 0; // 0: lower
+								// 1: upper
+	std::uint8_t y_offset = 0;
+};
+
 /* ppu structure itself */
 static struct nes_ppu_stru
 {
 	void fn_init_ppu();
 	void fn_run_ppu();
 	void fn_draw_sprite(sf::Vector2f& position, void* sprite_data);
-	void fn_store_sprite(std::vector<sf::Sprite>& vector_to_store);
-
-	std::int16_t ppu_ctrl_reg = 0;
-	std::int16_t ppu_mask_reg = 0;
-	std::int16_t ppu_status_reg = 0;
-	std::int16_t ppu_oadmaddr_reg = 0;
-	std::int16_t ppu_scroll_reg = 0;
-	std::int16_t ppu_addr_reg = 0;
-	std::int16_t ppu_data_reg = 0;
-	
-	std::uint16_t cur_cycle = 0;
-	registers_stru registers;
-
-private:
-	std::vector<sf::Sprite> sprites;
-	std::vector<sf::Sprite> sprites_to_draw;
-	std::map<std::int32_t, void*> sprite_map_data;
+	void fn_store_sprite(sf::Sprite& sprite_to_store);
+	void fn_destroy_ppu();
 	void fn_init_registers();
 	void fn_do_scroll();
+	
+	registers_stru registers;
+	PIPELINE_STATES_E current_pipeline_state = PIPELINE_STATES_E::PRERENDER;
+
+	// cpu cycle
+	std::uint16_t cycle = 0; // the cycle of the PPU
+	std::uint16_t scanline = 0; // scans each cycle
+	std::vector<std::uint8_t> pattern_table_left;
+	std::vector<std::uint8_t> pattern_table_right;
+
+	std::vector<std::vector<std::uint8_t>> pattern_table;
+
+private:
+	std::map<std::int32_t, void*> sprite_map_data;
 	void fn_get_pattern_data();
+	void fn_handle_prerender(); // called before rendering
+	void fn_handle_render(); // render
+	void fn_handle_quitrender(); // called when render stops
+	void fn_handle_vblank(); // vertical blank function
+	void fn_breakup_pattern_table();
 } g_nes_ppu;

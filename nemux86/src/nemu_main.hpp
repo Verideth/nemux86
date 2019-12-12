@@ -18,9 +18,7 @@ public:
 	std::int32_t length;
 	std::unique_ptr<std::uint8_t[]> memory;
 	std::string file_name;
-
-private:
-	static std::unique_ptr<sf::RenderWindow> window;
+	sf::RenderWindow window;
 };
 
 extern std::unique_ptr<c_nemu> g_nemu_ptr;

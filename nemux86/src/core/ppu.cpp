@@ -2,15 +2,55 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include "../nemu_main.hpp"
+#include <array>
 
 void nes_ppu_stru::fn_init_ppu()
 {
 	this->fn_init_registers();
+	this->fn_get_pattern_data();
+}
+
+void nes_ppu_stru::fn_handle_prerender()
+{
+	this->current_pipeline_state = PIPELINE_STATES_E::RENDER;
+}
+
+void nes_ppu_stru::fn_handle_render()
+{
+	// handle rendering
+	
+	this->fn_do_scroll();
+}
+
+void nes_ppu_stru::fn_handle_quitrender()
+{
+
+}
+
+void nes_ppu_stru::fn_handle_vblank()
+{
+	// handle vblank stuff here
 }
 
 void nes_ppu_stru::fn_run_ppu()
 {
-	
+	switch (this->current_pipeline_state)
+	{
+	case PIPELINE_STATES_E::PRERENDER:
+		this->fn_handle_prerender();
+		break;
+	case PIPELINE_STATES_E::RENDER:
+		this->fn_handle_render();
+		break;
+	case PIPELINE_STATES_E::QUIT_RENDER:
+		this->fn_destroy_ppu();
+		break;
+	case PIPELINE_STATES_E::VERTICAL_BLANK:
+		this->fn_handle_vblank();
+		break;
+	default:
+		break;
+	}
 }
 
 void nes_ppu_stru::fn_do_scroll()
@@ -23,19 +63,79 @@ void nes_ppu_stru::fn_draw_sprite(sf::Vector2f& position, void* sprite_data)
 	
 }
 
-void nes_ppu_stru::fn_store_sprite(std::vector<sf::Sprite>& vector_to_store)
+void nes_ppu_stru::fn_store_sprite(sf::Sprite& sprite_to_store)
 {
 	
 }
 
 void nes_ppu_stru::fn_get_pattern_data()
 {
-	
+	for (std::int32_t it = LEFT_TABLE_START;
+		it <= LEFT_TABLE_END;
+		it++)
+	{
+		auto scanline = g_nemu_ptr->memory[it];
+
+		if (scanline)
+		{
+			this->pattern_table_left.push_back(scanline);
+		}
+	}
+
+	for (std::int32_t it = RIGHT_TABLE_START;
+		it <= RIGHT_TABLE_END;
+		it++)
+	{
+		auto scanline = g_nemu_ptr->memory[it];
+
+		if (scanline)
+		{
+			this->pattern_table_right.push_back(scanline);
+		}
+	}
+
+	this->fn_breakup_pattern_table();
+}
+
+void nes_ppu_stru::fn_breakup_pattern_table()
+{
+	std::int32_t byte_check = 0;
+	std::vector<std::uint8_t> bytecode_data;
+
+	for (auto& element : this->pattern_table_left)
+	{
+		++byte_check;
+		bytecode_data.push_back(element);
+
+		/*
+		 * checks if 16 bytes have passed
+		 * if so, then it will reset the check
+		 * and send the data to the pattern table vector
+		 */
+		if (byte_check >= 16)
+		{
+			this->pattern_table.push_back(bytecode_data);
+			bytecode_data.clear();
+			byte_check = 0;
+		}
+	}
+
+	bytecode_data.clear();
+
+	// finish this function up
+}
+
+void nes_ppu_stru::fn_destroy_ppu()
+{
+	this->cycle = 0;
+	this->current_pipeline_state = PIPELINE_STATES_E::QUIT_RENDER;
+	this->scanline = 0;
+	g_nemu_ptr->window.close();
 }
 
 void nes_ppu_stru::fn_init_registers()
 {
-	const std::uint8_t shift_amt = 7; // we isolate it to the end, subtracted by the offset, so the value is that.
+	constexpr std::uint8_t shift_amt = 7; // we isolate it to the end, subtracted by the offset, so the value is that.
 
 	/*
 	 * EACH register inside of the PPU starts at

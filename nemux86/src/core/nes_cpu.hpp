@@ -6,6 +6,17 @@
 #include <stack>
 #include <vector>
 
+/* implement later */
+enum ADDRESSING_MODES_E
+{
+	ZPI_X = 0x01, // zero page indexed d, x
+	ZPI_Y = 0x02, // zero page indexed d, y
+	ABSINDEX_X = 0x03, // absolute index d, x
+	ABSINDEX_Y = 0x04, // absolute index d, y
+	INDEXINDIR_X = 0x05, // index indirect d, x
+	INDEXINDIR_Y = 0x06 // index indirect d, y
+};
+
 struct cpu_registers_stru
 {
 	std::uint16_t pc = 0; // program counter, 16 bit number 
@@ -23,6 +34,7 @@ static struct nes_cpu_stru : nes_stru
 {
 	nes_cpu_stru() = default;
 	/* converts the location (address) bytecode, also sets up cur_opcode */
+	void fn_initialize_cpu();
 	void fn_convert_mem_bytecode(const std::uint16_t location);
 	void fn_setup_opcode_vector();
 

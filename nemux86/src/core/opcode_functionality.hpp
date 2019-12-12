@@ -70,17 +70,22 @@ namespace OPCODE_FUNCTIONALITY
 
 	inline void gfn_opcode_execute(const opcode_stru& opcode_to_exec)
 	{
-		const std::uint8_t address_mode = ((opcode_to_exec.bytecode & - ADDRESS_MODE_MASK) >> ADDRESS_MODE_MASK);
+		const std::uint8_t address_mode = ((opcode_to_exec.bytecode & ADDRESS_MODE_MASK) >> ADDRESS_MODE_MASK);
 		g_nes_cpu.registers.current_addressing_mode = address_mode;
 
+
+		/*
+		 * implement later
 		switch (address_mode)
 		{
 			
 		}
+		*/
+		
 		switch (opcode_to_exec.l_endian)
 		{
+			/* finish opcode switch statement. will be pretty massive */
 		case ORA_1: gfn_ora(opcode_to_exec.bytecode); break;
-			/* get the functionality for the opcodes in between */
 		case NOP_1: gfn_nop(); break;
 
 		default:
