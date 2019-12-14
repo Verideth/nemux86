@@ -145,7 +145,6 @@ void nes_ppu_stru::fn_breakup_pattern_table()
 		{
 			this->pattern_table.push_back(bytecode_data);
 			bytecode_data.clear();
-			std::printf("PATTERN TABLE SIZE = %i\n", this->pattern_table.size());
 			byte_check = -1; // -1 because it indexes after this if statement. so it becomes 0
 		}
 		
