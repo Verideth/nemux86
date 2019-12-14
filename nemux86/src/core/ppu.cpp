@@ -3,6 +3,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include "../nemu_main.hpp"
 #include <array>
+#include <iterator>
 
 void nes_ppu_stru::fn_init_ppu()
 {
@@ -70,7 +71,7 @@ void nes_ppu_stru::fn_store_sprite(sf::Sprite& sprite_to_store)
 
 void nes_ppu_stru::fn_get_pattern_data()
 {
-	for (std::int32_t it = LEFT_TABLE_START;
+	for (std::uint16_t it = LEFT_TABLE_START;
 		it <= LEFT_TABLE_END;
 		it++)
 	{
@@ -82,8 +83,8 @@ void nes_ppu_stru::fn_get_pattern_data()
 		}
 	}
 
-	for (std::int32_t it = RIGHT_TABLE_START;
-		it <= RIGHT_TABLE_END;
+	for (std::uint16_t it = RIGHT_TABLE_START;
+		it <= RIGHT_TABLE_END - 1;
 		it++)
 	{
 		auto scanline = g_nemu_ptr->memory[it];
@@ -99,30 +100,49 @@ void nes_ppu_stru::fn_get_pattern_data()
 
 void nes_ppu_stru::fn_breakup_pattern_table()
 {
-	std::int32_t byte_check = 0;
+	std::int32_t byte_check = 0; // total bytes checked from both pattern tables
+	std::int32_t left_checks = 0; // total bytes checked from the left table
+	std::int32_t right_checks = 16; // total bytes checked from right table
 	std::vector<std::uint8_t> bytecode_data;
 
-	for (auto& element : this->pattern_table_left)
+	for (std::uint16_t it = LEFT_TABLE_START;
+		it <= LEFT_TABLE_END - 1;
+		++it)
 	{
-		++byte_check;
-		bytecode_data.push_back(element);
+		/* if 16 bytes has passed on the left pattern table */
+		if (left_checks == 16)
+		{
+			bytecode_data.push_back(this->pattern_table_left[it]);
+			++left_checks;
+		}
+		/* increment right side when left is over */
+		else if (left_checks >= 16)
+		{
+			bytecode_data.push_back(this->pattern_table_right[it]);
+			++right_checks;
+
+			/* if 16 bytes has passed on the right table */
+			if (right_checks == 32)
+			{
+				right_checks = 16;
+				left_checks = 0;
+			}
+		}
 
 		/*
-		 * checks if 16 bytes have passed
-		 * if so, then it will reset the check
-		 * and send the data to the pattern table vector
+		 * once the checking is done processing,
+		 * send all the data over into the
+		 * main pattern table vector!
 		 */
-		if (byte_check >= 16)
+		if (byte_check == 32)
 		{
 			this->pattern_table.push_back(bytecode_data);
-			bytecode_data.clear();
+			std::printf("PATTERN TABLE SIZE = %i\n", this->pattern_table.size());
 			byte_check = 0;
 		}
+		
+		++byte_check;
 	}
-
-	bytecode_data.clear();
-
-	// finish this function up
 }
 
 void nes_ppu_stru::fn_destroy_ppu()
