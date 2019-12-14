@@ -21,6 +21,7 @@ enum class PIPELINE_STATES_E
 	VERTICAL_BLANK
 };
 
+/* implement later...? */
 enum OAM_READ_FROM_E
 {
 	PRIMARY_OAM = 1,

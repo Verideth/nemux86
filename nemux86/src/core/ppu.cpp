@@ -100,23 +100,30 @@ void nes_ppu_stru::fn_get_pattern_data()
 
 void nes_ppu_stru::fn_breakup_pattern_table()
 {
-	std::int32_t byte_check = 0; // total bytes checked from both pattern tables
-	std::int32_t left_checks = 0; // total bytes checked from the left table
-	std::int32_t right_checks = 16; // total bytes checked from right table
+	std::uint32_t byte_check = 0; // total bytes checked from both pattern tables
+	std::uint32_t left_checks = 0; // total bytes checked from the left table
+	std::uint32_t right_checks = 16; // total bytes checked from right table
 	std::vector<std::uint8_t> bytecode_data;
 
-	for (std::uint16_t it = LEFT_TABLE_START;
-		it <= LEFT_TABLE_END - 1;
+	/*
+	 * right table pattern and left table pattern are the same size
+	 * so iterating over 1 size, for both containers, is completely
+	 * fine in this scenario
+	 */
+	for (std::uint32_t it = LEFT_TABLE_START;
+		it <= LEFT_TABLE_END; 
 		++it)
 	{
 		/* if 16 bytes has passed on the left pattern table */
-		if (left_checks == 16)
+		if (left_checks <= 16 && 
+			it < this->pattern_table_left.size())
 		{
 			bytecode_data.push_back(this->pattern_table_left[it]);
 			++left_checks;
 		}
 		/* increment right side when left is over */
-		else if (left_checks >= 16)
+		else if (left_checks > 16 &&
+			it < this->pattern_table_right.size())
 		{
 			bytecode_data.push_back(this->pattern_table_right[it]);
 			++right_checks;
@@ -138,7 +145,8 @@ void nes_ppu_stru::fn_breakup_pattern_table()
 		{
 			this->pattern_table.push_back(bytecode_data);
 			bytecode_data.clear();
-			byte_check = -1; // -1 because it indexes after
+			std::printf("PATTERN TABLE SIZE = %i\n", this->pattern_table.size());
+			byte_check = -1; // -1 because it indexes after this if statement. so it becomes 0
 		}
 		
 		++byte_check;
