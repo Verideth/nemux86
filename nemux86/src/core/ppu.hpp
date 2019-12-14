@@ -249,8 +249,9 @@ struct pattern_table_stru
 };
 
 /* ppu structure itself */
-static struct nes_ppu_stru
+static  struct nes_ppu_stru
 {
+	nes_ppu_stru() = default;
 	void fn_init_ppu();
 	void fn_run_ppu();
 	void fn_draw_sprite(sf::Vector2f& position, void* sprite_data);

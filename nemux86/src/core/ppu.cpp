@@ -2,25 +2,23 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include "../nemu_main.hpp"
-#include <array>
-#include <iterator>
+
+sf::Texture texture;
+sf::RectangleShape rect;
+sf::Texture texture_2;
+sf::RectangleShape rect_2;
+sf::Sprite sprite;
 
 void nes_ppu_stru::fn_init_ppu()
 {
-	this->fn_init_registers();
-	this->fn_get_pattern_data();
+	
 }
 
 void nes_ppu_stru::fn_handle_prerender()
 {
 	this->current_pipeline_state = PIPELINE_STATES_E::RENDER;
-}
-
-void nes_ppu_stru::fn_handle_render()
-{
-	// handle rendering
-	
-	this->fn_do_scroll();
+	this->fn_init_registers();
+	this->fn_get_pattern_data();
 }
 
 void nes_ppu_stru::fn_handle_quitrender()
@@ -100,60 +98,135 @@ void nes_ppu_stru::fn_get_pattern_data()
 
 void nes_ppu_stru::fn_breakup_pattern_table()
 {
-	std::uint32_t byte_check = 0; // total bytes checked from both pattern tables
-	std::uint32_t left_checks = 0; // total bytes checked from the left table
-	std::uint32_t right_checks = 16; // total bytes checked from right table
-	std::vector<std::uint8_t> bytecode_data;
+	/*
+	* Bit plane top
+	* $0xx0=$41  01000001
+	* $0xx1=$C2  11000010
+	* $0xx2=$44  01000100
+	* $0xx3=$48  01001000
+	* $0xx4=$10  00010000
+	* $0xx5=$20  00100000         .1.....3
+	* $0xx6=$40  01000000         11....3.
+	* $0xx7=$80  10000000  =====  .1...3..
+    * Bit plane bottom			  .1..3...
+	* $0xx8=$01  00000001  =====  ...3.22.
+	* $0xx9=$02  00000010         ..3....2
+	* $0xxA=$04  00000100         .3....2.
+	* $0xxB=$08  00001000         3....222
+	* $0xxC=$16  00010110
+	* $0xxD=$21  00100001
+	* $0xxE=$42  01000010
+	* /
+	// if bit at X in plane 1 is on, and bit at X in plane Y is on, then 3
+	// if bit at X in plane 1 is on, and bit at X in plane Y is off, then 1
+	// if bit set has any other bits in it, then bit is 2, assuming other bit doesnt have
+	// one at same location
 
 	/*
-	 * right table pattern and left table pattern are the same size
-	 * so iterating over 1 size, for both containers, is completely
-	 * fine in this scenario
-	 */
-	for (std::uint32_t it = LEFT_TABLE_START;
-		it <= LEFT_TABLE_END; 
-		++it)
-	{
-		/* if 16 bytes has passed on the left pattern table */
-		if (left_checks <= 16 && 
-			it < this->pattern_table_left.size())
-		{
-			bytecode_data.push_back(this->pattern_table_left[it]);
-			++left_checks;
-		}
-		/* increment right side when left is over */
-		else if (left_checks > 16 &&
-			it < this->pattern_table_right.size())
-		{
-			bytecode_data.push_back(this->pattern_table_right[it]);
-			++right_checks;
+	* 01000001 // A
+	* 00000001 // B
+	* --------
+	* 01000003 // C		<-- array bytes
+	* --------
+	*/
+	
+	std::vector<std::vector<std::uint8_t>> bytecode_data;
+	const std::uint8_t number_of_bytes_pattern = 16; // probably varies?
 
-			/* if 16 bytes has passed on the right table */
-			if (right_checks == 32)
+	// for each 16 bytes in the pattern table...
+	for (std::uint16_t l_palette_mem_ptr = LEFT_TABLE_START; l_palette_mem_ptr < LEFT_TABLE_END - 1; l_palette_mem_ptr += number_of_bytes_pattern)
+	{
+		/* extract top and bottom bit planes. */
+		std::uint8_t top_bit_plane[8]; // A
+		std::uint8_t bot_bit_plane[8]; // B
+
+		// for these 16 bytes in the tile.
+		for (uint8_t byte_index = 0; 
+			byte_index < number_of_bytes_pattern; 
+			byte_index++)
+		{	
+			if (byte_index < 8) // 0, 1, 2, 3, 4, 5, 6, 7
 			{
-				right_checks = 16;
-				left_checks = 0;
+				// first bit plane.
+				top_bit_plane[byte_index] = this->pattern_table_left[byte_index]; 
+			}
+			else if (byte_index >= 8) 	// 8, 9, 10, 11, 12, 13, 14, 15
+			{
+				// second bit plane.
+				const std::uint8_t offset_byte_index = byte_index - 8; // this is so we start at index 0.
+
+				bot_bit_plane[offset_byte_index] = this->pattern_table_left[byte_index];
 			}
 		}
 
-		/*
-		 * once the checking is done processing,
-		 * send all the data over into the
-		 * main pattern table vector!
-		 */
-		if (byte_check == 32)
-		{
-			this->pattern_table.push_back(bytecode_data);
-			bytecode_data.clear();
-			byte_check = -1; // -1 because it indexes after this if statement. so it becomes 0
-		}
+		l_palette_mem_ptr++;
 		
-		++byte_check;
-	}
 
-	bytecode_data.clear();
+		
+		/* combine the top and bottom bit plane to get the pixel pattern */
+		
+		// the resulting pixel pattern is
+		std::vector<std::uint8_t> pixel_pattern; // C = A + B
+
+		for (std::uint8_t byte_index = 0; 
+			byte_index < 8; 
+			byte_index++)
+		{
+			const std::int8_t top_plane_byte = top_bit_plane[byte_index]; // 0 or 1, bit index 0
+			const std::int8_t bot_plane_byte = bot_bit_plane[byte_index]; // 0 or 1, bit index 1
+
+			// we start at the far left hand side of the byte
+			for (std::uint32_t target_bit = 0; 
+				target_bit < 8; 
+				target_bit++) // 0, 1, 2, 3, 4, 5, 6, 7
+			{
+				// we start at the far left hand side of the byte and scan right.
+				const std::uint8_t top_plane_bit = (top_plane_byte >> (7 - target_bit)) & (0b00000001); // pixel plane top controls bit 0
+				const std::uint8_t bot_plane_bit = (bot_plane_byte >> (7 - target_bit)) & (0b00000010); // pixel plane bottom controls bit 1
+
+				// combine them
+				uint8_t pixel_pattern_byte = 0b00000000;
+				pixel_pattern_byte = pixel_pattern_byte | top_plane_bit;
+				pixel_pattern_byte = pixel_pattern_byte | bot_plane_bit;
+
+				// we start at the far left hand side of the byte and scanning right, add to this table left to right.
+				pixel_pattern.push_back(pixel_pattern_byte);
+			}
+
+			bytecode_data.push_back(pixel_pattern);
+			this->pattern_table.push_back(bytecode_data[byte_index]);
+		}
+	}
+	
 	std::printf("PATTERN TABLE SIZE = %i\n", this->pattern_table.size());
 }
+
+std::int32_t it = 0;
+void nes_ppu_stru::fn_handle_render()
+{
+	// this isn't where the error is, its in the function above ^
+	// yea i know, im just seeing what happens with different
+	// variables to better understand
+	//
+	
+	++it;
+	if (it == 255) { it = 0; }
+
+	const std::uint8_t* test_data = this->pattern_table[6].data();
+	texture.create(80.0, 80.0);
+	texture.update(test_data);
+	texture.generateMipmap();
+	texture.setSrgb(true);
+	
+	sprite.setTexture(texture);
+	sprite.setPosition(sf::Vector2f(0.0, 0.0));
+	sprite.setScale(3.0, 3.0);
+	
+	g_nemu_ptr->window.draw(sprite);
+
+	this->fn_do_scroll();
+}
+
 
 void nes_ppu_stru::fn_destroy_ppu()
 {

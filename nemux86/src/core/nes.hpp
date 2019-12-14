@@ -1,7 +1,5 @@
 #pragma once
 
-#include "opcodes.hpp"
-
 static struct nes_stru
 {
 	nes_stru() = default;
@@ -9,6 +7,5 @@ static struct nes_stru
 	void fn_run_cpu_clock();
 	void fn_destroy_nes();
 
-protected:
-	opcode_stru cur_opcode;
+protected: 
 } g_nes;
