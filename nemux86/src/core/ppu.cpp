@@ -137,12 +137,14 @@ void nes_ppu_stru::fn_breakup_pattern_table()
 		if (byte_check == 32)
 		{
 			this->pattern_table.push_back(bytecode_data);
-			std::printf("PATTERN TABLE SIZE = %i\n", this->pattern_table.size());
 			byte_check = 0;
 		}
 		
 		++byte_check;
 	}
+
+	bytecode_data.clear();
+	std::printf("PATTERN TABLE SIZE = %i\n", this->pattern_table.size());
 }
 
 void nes_ppu_stru::fn_destroy_ppu()
