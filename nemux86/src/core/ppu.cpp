@@ -182,7 +182,7 @@ void nes_ppu_stru::fn_breakup_pattern_table()
 				const std::uint8_t bot_plane_bit = (bot_plane_byte >> (7 - target_bit)) & (0b00000010); // pixel plane bottom controls bit 1
 
 				// combine them
-				uint8_t pixel_pattern_byte = 0b00000000;
+				std::uint8_t pixel_pattern_byte = 0b00000000;
 				pixel_pattern_byte = pixel_pattern_byte | top_plane_bit;
 				pixel_pattern_byte = pixel_pattern_byte | bot_plane_bit;
 
