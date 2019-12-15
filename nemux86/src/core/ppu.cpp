@@ -3,11 +3,8 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include "../nemu_main.hpp"
 
-sf::Texture texture;
-sf::RectangleShape rect;
-sf::Texture texture_2;
-sf::RectangleShape rect_2;
-sf::Sprite sprite;
+sf::Texture g_test_texture;  
+sf::Sprite g_test_sprite;
 
 void nes_ppu_stru::fn_init_ppu()
 {
@@ -201,28 +198,19 @@ void nes_ppu_stru::fn_breakup_pattern_table()
 	std::printf("PATTERN TABLE SIZE = %i\n", this->pattern_table.size());
 }
 
-std::int32_t it = 0;
 void nes_ppu_stru::fn_handle_render()
 {
-	// this isn't where the error is, its in the function above ^
-	// yea i know, im just seeing what happens with different
-	// variables to better understand
-	//
-	
-	++it;
-	if (it == 255) { it = 0; }
-
 	const std::uint8_t* test_data = this->pattern_table[6].data();
-	texture.create(80.0, 80.0);
-	texture.update(test_data);
-	texture.generateMipmap();
-	texture.setSrgb(true);
+	g_test_texture.create(80.0, 80.0);
+	g_test_texture.update(test_data);
+	g_test_texture.generateMipmap();
+	g_test_texture.setSrgb(true);
 	
-	sprite.setTexture(texture);
-	sprite.setPosition(sf::Vector2f(0.0, 0.0));
-	sprite.setScale(3.0, 3.0);
+	g_test_sprite.setTexture(g_test_texture);
+	g_test_sprite.setPosition(sf::Vector2f(0.0, 0.0));
+	g_test_sprite.setScale(3.0, 3.0);
 	
-	g_nemu_ptr->window.draw(sprite);
+	g_nemu_ptr->window.draw(g_test_sprite);
 
 	this->fn_do_scroll();
 }
