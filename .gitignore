@@ -337,5 +337,7 @@ ASALocalRun/
 .localhistory/
 
 # BeatPulse healthcheck temp database
+# Don't allow NES roms to be uploaded
+# due to copyright rules.
 healthchecksdb
 *.nes
