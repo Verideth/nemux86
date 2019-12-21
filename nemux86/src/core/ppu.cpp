@@ -3,8 +3,22 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include "../nemu_main.hpp"
 
-sf::Texture g_test_texture;  
+sf::Texture g_test_texture;
+sf::Texture g_test_texture_2;
+sf::Texture g_test_texture_3;
+sf::Texture g_test_texture_4;
+sf::Texture g_test_texture_5;
+sf::Texture g_test_texture_6;
+sf::Texture g_test_texture_7;
 sf::Sprite g_test_sprite;
+sf::Sprite g_test_sprite_2;
+sf::Sprite g_test_sprite_3;
+sf::Sprite g_test_sprite_4;
+sf::Sprite g_test_sprite_5;
+sf::Sprite g_test_sprite_6;
+sf::Sprite g_test_sprite_7; 
+
+sf::Image g_test_image;
 
 void nes_ppu_stru::fn_init_ppu()
 {
@@ -179,39 +193,114 @@ void nes_ppu_stru::fn_breakup_pattern_table()
 			{
 				// we start at the far left hand side of the byte and scan right.
 				const std::uint8_t top_plane_bit = (top_plane_byte >> (7 - target_bit)) & (0b00000001); // pixel plane top controls bit 0
-				const std::uint8_t bot_plane_bit = (bot_plane_byte >> (7 - target_bit)) & (0b00000010); // pixel plane bottom controls bit 1
+				const std::uint8_t bot_plane_bit = (bot_plane_byte >> (7 - target_bit)) & (0b00000001); // pixel plane bottom controls bit 1
 
 				// combine them
-				std::uint8_t pixel_pattern_byte = 0b00000000;
-				pixel_pattern_byte = pixel_pattern_byte | top_plane_bit;
-				pixel_pattern_byte = pixel_pattern_byte | bot_plane_bit;
+				std::uint8_t pixel_pattern_byte = top_plane_bit | bot_plane_bit;
+
 
 				// we start at the far left hand side of the byte and scanning right, add to this table left to right.
 				pixel_pattern.push_back(pixel_pattern_byte);
 			}
-
+			
 			bytecode_data.push_back(pixel_pattern);
-			this->pattern_table.push_back(bytecode_data[byte_index]);
 		}
 	}
+
+	this->pattern_table.push_back(bytecode_data);
 	
 	std::printf("PATTERN TABLE SIZE = %i\n", this->pattern_table.size());
 }
 
+static std::uint8_t gfn_get_color(const std::uint8_t* data)
+{
+	if (*data == 0) { return 0; }
+	if (*data == 1) { return 50; }
+	if (*data == 2) { return 135; }
+	if (*data == 3) { return 215; }
+
+	return 0;
+}
+
 void nes_ppu_stru::fn_handle_render()
 {
-	const std::uint8_t* test_data = this->pattern_table[6].data();
-	g_test_texture.create(80.0, 80.0);
-	g_test_texture.update(test_data);
-	g_test_texture.generateMipmap();
-	g_test_texture.setSrgb(true);
-	
-	g_test_sprite.setTexture(g_test_texture);
-	g_test_sprite.setPosition(sf::Vector2f(0.0, 0.0));
-	g_test_sprite.setScale(3.0, 3.0);
-	
-	g_nemu_ptr->window.draw(g_test_sprite);
+	const std::uint8_t* test_data_0 = this->pattern_table[0][32].data();
+	const std::uint8_t* test_data_1 = this->pattern_table[0][33].data();
+	const std::uint8_t* test_data_2 = this->pattern_table[0][34].data();
+	const std::uint8_t* test_data_3 = this->pattern_table[0][35].data();
+	const std::uint8_t* test_data_4 = this->pattern_table[0][36].data();
+	const std::uint8_t* test_data_5 = this->pattern_table[0][37].data();
+	const std::uint8_t* test_data_6 = this->pattern_table[0][38].data();
 
+	const std::uint8_t color = gfn_get_color(test_data_0);
+	
+	g_test_texture.update(test_data_0);
+	g_test_texture.create(50.0, 50.0);
+	g_test_texture.generateMipmap();
+	g_test_texture.setSrgb(false);
+
+	g_test_texture_2.update(test_data_1);
+	g_test_texture_2.create(50.0, 50.0);
+	g_test_texture_2.generateMipmap();
+	g_test_texture_2.setSrgb(false);
+
+	g_test_texture_3.update(test_data_2);
+	g_test_texture_3.create(50.0, 50.0);
+	g_test_texture_3.generateMipmap();
+	g_test_texture_3.setSrgb(false);
+	
+	g_test_texture_4.update(test_data_3);
+	g_test_texture_4.create(50.0, 50.0);
+	g_test_texture_4.generateMipmap();
+	g_test_texture_4.setSrgb(false);
+
+	g_test_texture_5.update(test_data_4);
+	g_test_texture_5.create(50.0, 50.0);
+	g_test_texture_5.generateMipmap();
+	g_test_texture_5.setSrgb(false);
+	
+	g_test_texture_6.update(test_data_5);
+	g_test_texture_6.create(50.0, 50.0);
+	g_test_texture_6.generateMipmap();
+	g_test_texture_6.setSrgb(false);
+	
+	g_test_texture_7.update(test_data_6);
+	g_test_texture_7.create(50.0, 50.0);
+	g_test_texture_7.generateMipmap();
+	g_test_texture_7.setSrgb(false);
+
+	g_test_sprite.setTexture(g_test_texture);
+	g_test_sprite.setPosition(sf::Vector2f(100.0, 0.0));
+	g_test_sprite.setScale(5.0, 5.0);
+
+	g_test_sprite_2.setTexture(g_test_texture_2);
+	g_test_sprite_2.setPosition(sf::Vector2f(100.0, 0.0));
+	g_test_sprite_2.setScale(5.0, 5.0);
+
+	g_test_sprite_3.setTexture(g_test_texture_3);
+	g_test_sprite_3.setPosition(sf::Vector2f(100.0, 0.0));
+	g_test_sprite_3.setScale(5.0, 5.0);
+
+	g_test_sprite_4.setTexture(g_test_texture_4);
+	g_test_sprite_4.setPosition(sf::Vector2f(100.0, 0.0));
+	g_test_sprite_4.setScale(5.0, 5.0);
+
+	g_test_sprite_5.setTexture(g_test_texture_5);
+	g_test_sprite_5.setPosition(sf::Vector2f(100.0, 0.0));
+	g_test_sprite_5.setScale(5.0, 5.0);
+
+	g_test_sprite_6.setTexture(g_test_texture_6);
+	g_test_sprite_6.setPosition(sf::Vector2f(100.0, 0.0));
+	g_test_sprite_6.setScale(5.0, 5.0);
+
+	g_test_sprite_7.setTexture(g_test_texture_7);
+	g_test_sprite_7.setPosition(sf::Vector2f(100.0, 0.0));
+	g_test_sprite_7.setScale(5.0, 5.0);
+
+	g_nemu_ptr->window.draw(g_test_sprite);
+	g_nemu_ptr->window.draw(g_test_sprite_2);
+	g_nemu_ptr->window.draw(g_test_sprite_3);
+	
 	this->fn_do_scroll();
 }
 

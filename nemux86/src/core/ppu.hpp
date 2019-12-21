@@ -49,7 +49,7 @@ struct registers_stru
 		std::uint16_t background_pattern_table = 0; // 0: 0x1000, 1: 0x2000
 		
 		/* LO BITS */
-		std::uint16_t sprite_pattern_table = 0; // 0: 0x0000, 1: 0x1000, ignored in 8x16 mode on the sprite
+		std::uint16_t sprite_pattern_table = 0; // 0: 0x0000, 1: 0x1000, ignored in 8x16 mode on the g_test_sprite
 		std::uint16_t vram_incrementer = 0; // vram address incrementer per CPU read/write
 
 		/* LOWEST 2 BITS, 0xXYNN */
@@ -59,7 +59,7 @@ struct registers_stru
 
 	/*
 	 * PPUMASK
-	 * this register handles sprite coloring, backgrounds
+	 * this register handles g_test_sprite coloring, backgrounds
 	 * and according to nesdev, color effects as well.
 	 */
 	struct flags_mask_stru
@@ -99,19 +99,19 @@ struct registers_stru
 							// for vertical blank, which is a flag
 							// for generating a video display to be used
 							// by the nes itself.
-		std::uint8_t s = 0; // sprite 0 hit. set when a nonzero pixel
-							// of sprite index 0 overlaps a nonzero
+		std::uint8_t s = 0; // g_test_sprite 0 hit. set when a nonzero pixel
+							// of g_test_sprite index 0 overlaps a nonzero
 							// background pixel. used for rastar timing.
-							// as well as to see if a sprite could
+							// as well as to see if a g_test_sprite could
 							// draw on the vertical blank.
 							// could be created on to the vertical blank
-		std::uint8_t o = 0; // sprite overflow. 0: no 1: yes
+		std::uint8_t o = 0; // g_test_sprite overflow. 0: no 1: yes
 							// this flag checks if there are more
 							// than eight sprites on a scanline.
 							// apparently hardware bugs will make
 							// it generate false positives, as
 							// well as false negatives.
-							// this flag is also set at sprite evals
+							// this flag is also set at g_test_sprite evals
 	} ppu_status;
 
 	/*
@@ -269,7 +269,7 @@ static  struct nes_ppu_stru
 	std::vector<std::uint8_t> pattern_table_left;
 	std::vector<std::uint8_t> pattern_table_right;
 
-	std::vector<std::vector<std::uint8_t>> pattern_table;
+	std::vector< std::vector<std::vector<std::uint8_t>>> pattern_table;
 
 private:
 	std::map<std::int32_t, void*> sprite_map_data;
