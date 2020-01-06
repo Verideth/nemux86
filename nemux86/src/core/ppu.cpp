@@ -152,7 +152,7 @@ void nes_ppu_stru::fn_breakup_pattern_table()
 		std::uint8_t bot_bit_plane[8]; // B
 
 		// for these 16 bytes in the tile.
-		for (uint8_t byte_index = 0; 
+		for (std::uint8_t byte_index = 0; 
 			byte_index < number_of_bytes_pattern; 
 			byte_index++)
 		{	
