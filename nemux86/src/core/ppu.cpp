@@ -145,7 +145,9 @@ void nes_ppu_stru::fn_breakup_pattern_table()
 	const std::uint8_t number_of_bytes_pattern = 16; // probably varies?
 
 	// for each 16 bytes in the pattern table...
-	for (std::uint16_t l_palette_mem_ptr = LEFT_TABLE_START; l_palette_mem_ptr < LEFT_TABLE_END - 1; l_palette_mem_ptr += number_of_bytes_pattern)
+	for (std::uint16_t l_palette_mem_ptr = LEFT_TABLE_START; 
+	     l_palette_mem_ptr < LEFT_TABLE_END - 1; 
+	     l_palette_mem_ptr += number_of_bytes_pattern)
 	{
 		/* extract top and bottom bit planes. */
 		std::uint8_t top_bit_plane[8]; // A
