@@ -171,10 +171,6 @@ void nes_ppu_stru::fn_breakup_pattern_table()
 				bot_bit_plane[offset_byte_index] = this->pattern_table_left[byte_index];
 			}
 		}
-
-		l_palette_mem_ptr++;
-		
-
 		
 		/* combine the top and bottom bit plane to get the pixel pattern */
 		
