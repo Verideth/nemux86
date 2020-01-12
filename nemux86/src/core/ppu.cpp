@@ -173,7 +173,6 @@ void nes_ppu_stru::fn_breakup_pattern_table()
 		}
 		
 		/* combine the top and bottom bit plane to get the pixel pattern */
-		
 		// the resulting pixel pattern is
 		std::vector<std::uint8_t> pixel_pattern; // C = A + B
 
